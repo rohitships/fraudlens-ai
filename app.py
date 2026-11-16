@@ -1,4 +1,4 @@
-"""FraudLens AI: academically honest Streamlit + Spark MLlib fraud detection demo."""
+"""FraudLens AI: Streamlit + Spark MLlib fraud analytics platform."""
 import math
 import os
 import tempfile
@@ -74,7 +74,7 @@ def get_spark():
     os.environ.setdefault("PYSPARK_PYTHON",os.environ.get("PYTHON","python3"))
     from pyspark.sql import SparkSession
     return (SparkSession.builder.master("local[2]")
-            .appName("FraudLens-BDA-Viva")
+            .appName("FraudLens-Fraud-Analytics")
             .config("spark.driver.memory","1g")
             .config("spark.sql.shuffle.partitions","4")
             .config("spark.ui.enabled","false")
@@ -154,7 +154,7 @@ with st.sidebar:
     st.markdown("## 🛡️ FraudLens AI")
     st.caption("BIG DATA FRAUD INTELLIGENCE")
     st.divider()
-    page=st.radio("Navigation",["📊 Overview","🗂️ Dataset Explorer","⚡ Spark & BDA Lab","🧠 MLlib Training","🎯 Fraud Prediction","🌊 Stream Mining","🎓 Professor Demo"],label_visibility="collapsed")
+    page=st.radio("Navigation",["📊 Overview","🗂️ Dataset Explorer","⚡ Spark & BDA Lab","🧠 MLlib Training","🎯 Fraud Prediction","🌊 Stream Mining"],label_visibility="collapsed")
     st.divider()
     st.markdown("**Dataset source**")
     st.caption(status())
@@ -173,7 +173,7 @@ with st.sidebar:
         st.session_state.df=example_data();st.session_state.source='Synthetic demo';st.session_state.run=None;st.rerun()
     st.caption('For real MLlib results, upload the ULB dataset and train a model.')
     st.markdown('---')
-    st.caption('BDA mini-project • Apache Spark MLlib')
+    st.caption('Apache Spark MLlib • Fraud Analytics')
 
 df=st.session_state.df
 n=len(df); n_fraud=int(df.Class.sum());n_normal=n-n_fraud
@@ -269,7 +269,7 @@ elif page=="⚡ Spark & BDA Lab":
     fig=px.bar(x=[f'P{i+1}' for i in range(p)],y=blocks,labels={'x':'Simulated partition','y':'Record count'},color_discrete_sequence=['#3d87d0'])
     st.plotly_chart(chartstyle(fig,260),use_container_width=True)
     st.caption('Partition chart above is a conceptual even-distribution simulation, not the actual Spark partition sizes. Use actual Spark details above for verified execution.')
-    with st.expander('🔎 BDA viva: why Spark instead of normal Python?'):
+    with st.expander('🔎 Why use Spark instead of standard Python processing?'):
         st.write('Spark enables partitioned computation, parallel execution, lazy transformations, DataFrames and scalable MLlib algorithms. A 150 MB dataset does not require a production cluster; this is an educational demonstration of scalable methods.')
 
 elif page=="🧠 MLlib Training":
@@ -361,24 +361,5 @@ elif page=="🌊 Stream Mining":
         st.markdown('**DGIM:** approximates the count of 1s in a recent binary window using power-of-two buckets and timestamps.')
         st.info('FM and DGIM are explained here but are **not implemented** in this version. The working stream demo provides a sliding-window fraud count and Bloom Filter membership check.')
 
-elif page=="🎓 Professor Demo":
-    page_header('Professor Viva Mode','Present the project clearly: problem → data → BDA → model → results → limitations.')
-    st.success('**30-second introduction:** “FraudLens AI demonstrates credit-card transaction analytics using Apache Spark DataFrames and Spark MLlib. The ULB dataset is extremely imbalanced, so model evaluation must focus on precision and fraud recall rather than accuracy alone.”')
-    steps=[('1 · Explain the problem','Fraud is rare; the ULB dataset contains 492 frauds in 284,807 transactions. Show the class distribution on Overview.'),('2 · Prove BDA usage','Open Spark & BDA Lab and run the real Spark groupBy job. Explain DataFrames, partitions, transformations and actions.'),('3 · Explain preparation','Use Dataset Explorer; the 28 anonymized V-features are already PCA components. Class is the label, not a predictor.'),('4 · Explain the model','Open MLlib Training and show Logistic Regression or Random Forest. Only discuss actual models trained in this session.'),('5 · Show results','Discuss actual confusion matrix, precision, recall, PR-AUC and the meaning of false negatives.'),('6 · Demonstrate predictions','Open Fraud Prediction and show real held-out classifications; clarify that model predictions are not proven fraud.'),('7 · Connect your BDA syllabus','Use Stream Mining to discuss sliding windows and Bloom Filters, distinguishing conceptual FM/DGIM from implemented features.')]
-    for title,desc in steps:
-        with st.expander(title,expanded=title.startswith('1')):st.write(desc)
-    st.subheader('Most likely professor questions')
-    questions={
-        'Where exactly is Big Data Analytics used?':'Spark DataFrame ingestion, Spark structured aggregations, partitioned processing, preprocessing via Spark ML, MLlib model fitting and evaluation.',
-        'Is your app using a Hadoop cluster?':'No. Local Spark is a single-machine setup. The architecture supports distributed execution when configured with a real cluster.',
-        'Why not use accuracy alone?':'A majority-class model can achieve approximately 99.827% accuracy on the ULB dataset yet miss all frauds.',
-        'What algorithms are actually used?':'The implemented trainable MLlib algorithms are Logistic Regression and Random Forest. State which one you ran and its measured metrics.',
-        'Is this real-time?':'No. The dataset is historical. The replay is a simulation, not an actual card network or Spark Structured Streaming integration.',
-        'How do you avoid data leakage?':'The Class column is excluded from features; splits are constructed first and preprocessing is fitted only on training records.',
-        'What is the main limitation?':'Historical evaluation on one dataset does not establish real-world performance; local mode and deployment resources limit scale.'}
-    for q,a in questions.items():
-        with st.expander(q):st.write(a)
-    st.download_button('Download viva speaking notes',data='\n\n'.join(q+'\n'+a for q,a in questions.items()),file_name='fraudlens_viva_notes.txt')
-
 st.markdown('---')
-st.caption(f'FraudLens AI • {status()} • Educational BDA prototype • Never use model predictions as real payment decisions.')
+st.caption(f'FraudLens AI • {status()} • Spark MLlib analytics prototype • Never use model predictions as real payment decisions.')
